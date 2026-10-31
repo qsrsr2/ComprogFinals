@@ -1,2 +1,0 @@
-# ComprogFinals
-school project repo
