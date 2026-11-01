@@ -16,7 +16,7 @@ CampusHub is a local desktop application designed to manage the inventory and bo
 
 ## Prerequisites
 
-* **Python 3.7 or higher**
+* **Python 3.10 or higher**
 
 * **Tkinter:** (Included in the standard Python library for Windows/macOS. Linux users may need to install it via `sudo apt-get install python3-tk`).
 
