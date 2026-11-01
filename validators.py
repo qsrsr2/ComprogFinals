@@ -24,13 +24,6 @@ def validate_date_format(date_text):
         return False, "Invalid date format. Please use YYYY-MM-DD."
 
 def validate_checkout_dates(borrow_date_str, due_date_str):
-    """
-    Validates both dates and ensures the due date is not before the borrow date.
-    
-    
-    
-    Demonstrates if-elif-else business rule validation.
-    """
     # Validate borrow date format
     b_success, b_result = validate_date_format(borrow_date_str)
     if not b_success:

@@ -9,12 +9,6 @@ class CampusHubApp:
         self.root.title("CampusHub: Resource Borrowing and Inventory Management")
         self.root.geometry("900x600")
         
-        #Android UI Fix
-        style = ttk.Style()
-        # Increase row height (adjust the number 35 up or down if needed)
-        style.configure("Treeview", rowheight=80, font=("Arial", 11)) 
-        # Make the headers bold to stand out
-        style.configure("Treeview.Heading", font=("Arial", 12, "bold"))
 
         # Setup Tabbed Interface
         self.notebook = ttk.Notebook(self.root)
@@ -170,6 +164,7 @@ class CampusHubApp:
         
         tk.Button(btn_frame, text="Add Borrower", width=15, command=self.show_add_borrower_dialog).pack(side=tk.LEFT, padx=10)
         tk.Button(btn_frame, text="Refresh List", width=15, command=self.load_borrower_data).pack(side=tk.LEFT, padx=10)
+        tk.Button(btn_frame, text="Toggle Status", width=15, command=self.toggle_borrower).pack(side=tk.LEFT, padx=10)
         
         self.load_borrower_data()
 
@@ -209,6 +204,32 @@ class CampusHubApp:
 
         tk.Button(dialog, text="Save", command=save_borrower).grid(row=3, column=0, columnspan=2, pady=20)
 
+    def toggle_borrower(self):
+        """Changes the active status of the selected borrower."""
+        selected = self.borrower_tree.focus()
+        if not selected:
+            messagebox.showerror("Selection Error", "Please select a borrower from the list first.")
+            return
+            
+        # Get the data from the selected row
+        values = self.borrower_tree.item(selected, 'values')
+        borrower_code = values[0]
+        current_status_str = values[3] # "Yes" or "No"
+        
+        # Convert "Yes"/"No" back to 1 or 0
+        current_status_int = 1 if current_status_str == "Yes" else 0
+        
+        success, msg = services.toggle_borrower_status(borrower_code, current_status_int)
+        
+        if success:
+            messagebox.showinfo("Status Updated", msg)
+            self.load_borrower_data() # Refresh the borrower table
+            
+            # If you are on the Checkout tab, this ensures the dropdown updates too
+            if hasattr(self, 'refresh_checkout_dropdowns'):
+                self.refresh_checkout_dropdowns() 
+        else:
+            messagebox.showerror("Update Failed", msg)
 
 
         #--checkout tab--#

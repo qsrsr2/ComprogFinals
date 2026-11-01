@@ -3,7 +3,6 @@ from database import get_connection
 import validators
 
 def add_new_asset(asset_code, name, category, location, condition):
-    """Validates input and inserts a new asset into the equipment table."""
     # Validate essential fields
     fields_to_check = {
         "Asset Code": asset_code, 
@@ -19,7 +18,6 @@ def add_new_asset(asset_code, name, category, location, condition):
     try:
         with get_connection() as conn:
             cursor = conn.cursor()
-            # ... (keep existing insert logic) ...  
             cursor.execute('''
                 INSERT INTO equipment (asset_code, name, category, location, condition, status)
                 VALUES (?, ?, ?, ?, ?, 'Available')
@@ -82,9 +80,25 @@ def get_active_borrowers():
         return cursor.fetchall()
 
 
+def toggle_borrower_status(borrower_code, current_status):
+    new_status = 0 if current_status else 1
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE borrowers 
+                SET active = ? 
+                WHERE borrower_code = ?
+            ''', (new_status, borrower_code))
+            conn.commit()
+            
+            status_text = "Active" if new_status else "Inactive"
+            return True, f"Borrower {borrower_code} is now {status_text}."
+    except Exception as e:
+        return False, f"Database error: {e}"
+
 
 # --- Checkout Logic ---
-
 def get_available_assets():
     """Retrieves only available assets for the checkout dropdown."""
     with get_connection() as conn:
@@ -114,7 +128,6 @@ def checkout_asset(asset_code, borrower_code, borrow_date, due_date):
 
     try:
         with get_connection() as conn:
-            # ... (keep existing database checkout logic) ...
             cursor = conn.cursor()
             # Verify asset is available
             cursor.execute('SELECT asset_id, status FROM equipment WHERE asset_code = ?', (asset_code,))
@@ -151,7 +164,6 @@ def checkout_asset(asset_code, borrower_code, borrow_date, due_date):
         
         #--returnasset--#
 def return_asset(loan_id, return_date):
-    """Processes a valid return transaction and resets asset status."""
     #Validate return date
     is_valid, msg = validators.validate_required_fields({"Return Date": return_date})
     if not is_valid:
@@ -163,7 +175,6 @@ def return_asset(loan_id, return_date):
 
     try:
         with get_connection() as conn:
-            # ... (keep existing database return logic) ...
             cursor = conn.cursor()
             # Find the active loan and associated asset
             cursor.execute('SELECT asset_id, status FROM loans WHERE loan_id = ?', (loan_id,))

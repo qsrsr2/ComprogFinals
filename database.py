@@ -5,6 +5,7 @@ DB_PATH = 'data/campushub.db'
 
 def get_connection():
     """Returns a connection to the SQLite database."""
+    
     # Ensure the data directory exists
     os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
     
