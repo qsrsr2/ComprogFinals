@@ -21,8 +21,8 @@ class CampusHubApp:
 
         self.notebook.add(self.tab_inventory, text="Inventory")
         self.notebook.add(self.tab_borrowers, text="Borrowers")
-        self.notebook.add(self.tab_checkout, text="Checkout / Return")
-        self.notebook.add(self.tab_monitoring, text="Reports")
+        self.notebook.add(self.tab_checkout, text="Checkout")
+        self.notebook.add(self.tab_monitoring, text="Monitoring & Returns")
 
         self.setup_inventory_tab()
         self.setup_borrowers_tab()
